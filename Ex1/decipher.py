@@ -4,7 +4,10 @@ import sys
 
 
 def decipher_phrase(phrase, lexicon_filename, abc_filename):
-
+    """
+    input: a phrase, lexicon filename and abc filename
+    return: a dictionary with status, original phrase and K
+    """
     print(f'starting deciphering using {lexicon_filename} and {abc_filename}')
 
     try:
