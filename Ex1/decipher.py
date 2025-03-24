@@ -24,7 +24,7 @@ def decipher_phrase(phrase, lexicon_filename, abc_filename):
                         break
                     else:
                         temp_sentence.append(temp_word)
-                if(len(temp_sentence) == len(phrase_encoded)):
+                if len(temp_sentence) == len(phrase_encoded):
                     real_sentence = " ".join(temp_sentence)
                     return {"status": 1, "orig_phrase": real_sentence, "K" : k}
 

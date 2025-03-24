@@ -31,7 +31,7 @@ def game(results_filename):
 
             for line in res_file:
                 winner_in_round = get_round_winner(line)
-                if(winner_in_round):
+                if winner_in_round:
                     game_scores[winner_in_round] = game_scores.get(winner_in_round, 0) + 1
 
             if game_scores:
