@@ -173,9 +173,3 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-#pycharm
-.idea/*
-!.idea/inspectionProfiles/
-!.idea/codeStyles/
-/.idea/inspectionProfiles/profiles_settings.xml
-/.idea/inspectionProfiles/Project_Default.xml
