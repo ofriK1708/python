@@ -11,7 +11,7 @@ def decipher_phrase(phrase, lexicon_filename, abc_filename):
     print(f'starting deciphering using {lexicon_filename} and {abc_filename}')
 
     try:
-        with open(abc_filename, 'r') as abc_file, open(lexicon_filename, 'rb') as lex_file:
+        with open(abc_filename, 'r',encoding= 'utf8') as abc_file, open(lexicon_filename, 'rb',encoding= 'utf8') as lex_file:
             lexicon = pkl.load(lex_file)
             abc_data = abc_file.read().split('\n')
             phrase_encoded = phrase.split()
