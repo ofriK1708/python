@@ -25,7 +25,7 @@ def game(results_filename):
     game_scores = dict()
 
     try:
-        with open(results_filename, "r") as res_file:
+        with open(results_filename, "r",encoding= 'utf8') as res_file:
             res_file.readline()
             num_of_winners = 0
 
