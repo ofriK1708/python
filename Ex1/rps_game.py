@@ -3,7 +3,7 @@ import sys
 
 def get_round_winner(line):
     """
-    input:a line of a round in the game
+    input:  a line of a round in the game
     return: winner name or tie according to the game rules
     """
 
@@ -21,7 +21,10 @@ def get_round_winner(line):
         return round_lst[0]
 
 def game(results_filename):
-
+    """
+    input:  a file name with the game results
+    return: the winner name or tie according to the game rules
+    """
     game_scores = dict()
 
     try:
