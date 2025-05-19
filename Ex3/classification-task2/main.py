@@ -11,12 +11,21 @@ from sklearn.preprocessing import StandardScaler
 from scipy.spatial.distance import pdist, cdist
 
 def get_distance_mean_std(df: np.ndarray) -> (float, float):
-    distances = pdist(df, metric='euclidean')
+    """
+    input: df: DataFrame
+    output: mean and std of the Euclidean distances between each pair of samples
+    """
+    distances = pdist(df, metric='euclidean') # calculate pairwise distances using Euclidean metric
     return distances.mean(), distances.std()
 
 
 def get_predictions(x_tst,x_trn,y_trn,rad) -> List:
-
+    """
+    input: x_tst: test data, radius
+    output: predictions for the test data
+    Predictions are based on the most common class of the neighbors within the
+    radius of each test sample.
+    """
     predictions = []
     most_common_class = y_trn.mode().iloc[0]
     dist_matrix = cdist(x_tst, x_trn, metric='euclidean')
@@ -26,7 +35,7 @@ def get_predictions(x_tst,x_trn,y_trn,rad) -> List:
         neighbor_indices = np.where(distances_to_trn_samples <= rad)[0]
         if len(neighbor_indices) > 0:
             classes_in_radius = y_trn.iloc[neighbor_indices].tolist()
-            predictions.append(Counter(classes_in_radius).most_common(1)[0][0])
+            predictions.append(Counter(classes_in_radius).most_common(1)[0][0]) # get the most common class fro,m the neighbors inside the circle
         else:
             predictions.append(most_common_class)
 
@@ -34,7 +43,12 @@ def get_predictions(x_tst,x_trn,y_trn,rad) -> List:
 
 
 def get_best_radius(dist_mean: float, dist_std: float, x_vld: DataFrame, y_vld: DataFrame, x_trn: DataFrame, y_trn: DataFrame) -> float:
-
+    """
+    input: dist_mean: mean of the distances, dist_std: std of the distances,
+              x_vld: validation data, y_vld: validation labels, x_trn: training data, y_trn: training labels
+    output: best radius for the validation data
+    The best radius is the one that maximizes the accuracy score on the validation data.
+    """
     max_accuracy_score = 0
     best_rad = 0
 
