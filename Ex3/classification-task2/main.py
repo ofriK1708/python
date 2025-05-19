@@ -38,7 +38,7 @@ def get_best_radius(dist_mean: float, dist_std: float, x_vld: DataFrame, y_vld: 
     max_accuracy_score = 0
     best_rad = 0
 
-    radii = np.linspace(max(0,dist_mean - 2 * dist_std), dist_mean + 2 * dist_std, num=15)
+    radii = np.linspace(max(0,dist_mean - 2 * dist_std), dist_mean + 2 * dist_std, num=30)
     for rad in radii:
         predications = get_predictions(x_vld, x_trn, y_trn, rad)
         current_accuracy_score = accuracy_score(predications, np.array(y_vld))
@@ -67,13 +67,13 @@ def classify_with_NNR(data_trn: str, data_vld: str, df_tst: DataFrame) -> List:
 
     x_tst_scaled = scaler.transform(df_tst)
 
-    dist_mean, dist_std = get_distance_mean_std(x_trn)
-    best_radius = get_best_radius(dist_mean, dist_std, x_vld, y_vld, x_trn, y_trn)
+    dist_mean, dist_std = get_distance_mean_std(x_trn_scaled)
+    best_radius = get_best_radius(dist_mean, dist_std, x_vld_scaled, y_vld, x_trn_scaled, y_trn)
 
     #  the data_tst dataframe should only(!) be used for the final predictions your return
     print(f'starting classification with {data_trn}, {data_vld}, predicting on {len(df_tst)} instances')
 
-    predictions = get_predictions(df_tst, x_trn, y_trn, best_radius)
+    predictions = get_predictions(x_tst_scaled, x_trn_scaled, y_trn, best_radius)
 
     return predictions
 
