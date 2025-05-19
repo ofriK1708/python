@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score
 from typing import List
 
 from sklearn.preprocessing import StandardScaler
-from scipy.spatial.distance import euclidean, pdist, cdist
+from scipy.spatial.distance import pdist, cdist
 
 def get_distance_mean_std(df: np.ndarray) -> (float, float):
     distances = pdist(df, metric='euclidean')
@@ -38,7 +38,7 @@ def get_best_radius(dist_mean: float, dist_std: float, x_vld: DataFrame, y_vld: 
     max_accuracy_score = 0
     best_rad = 0
 
-    radii = np.linspace(max(0,dist_mean - 2 * dist_std), dist_mean + 2 * dist_std, num=30)
+    radii = np.linspace(max(0,int(dist_mean - 2 * dist_std)), dist_mean + 2 * dist_std, num=30)
     for rad in radii:
         predications = get_predictions(x_vld, x_trn, y_trn, rad)
         current_accuracy_score = accuracy_score(predications, np.array(y_vld))
@@ -47,7 +47,7 @@ def get_best_radius(dist_mean: float, dist_std: float, x_vld: DataFrame, y_vld: 
             best_rad = rad
     return best_rad
 
-def get_x_y(df: DataFrame,scaler:StandardScaler ) -> (DataFrame, DataFrame):
+def get_x_y(df: DataFrame) -> (DataFrame, DataFrame):
 
     x = df[df.columns[:-1]]
     y = df[df.columns[-1]]
@@ -59,10 +59,10 @@ def classify_with_NNR(data_trn: str, data_vld: str, df_tst: DataFrame) -> List:
     data_training_df = pd.read_csv(data_trn)
     data_validation_df = pd.read_csv(data_vld)
 
-    x_trn, y_trn = get_x_y(data_training_df, scaler)
+    x_trn, y_trn = get_x_y(data_training_df)
     x_trn_scaled = scaler.fit_transform(x_trn)
 
-    x_vld, y_vld = get_x_y(data_validation_df, scaler)
+    x_vld, y_vld = get_x_y(data_validation_df)
     x_vld_scaled = scaler.transform(x_vld)
 
     x_tst_scaled = scaler.transform(df_tst)
