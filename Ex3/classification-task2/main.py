@@ -8,33 +8,29 @@ from sklearn.metrics import accuracy_score
 from typing import List
 
 from sklearn.preprocessing import StandardScaler
-from scipy.spatial.distance import euclidean, pdist, squareform
+from scipy.spatial.distance import euclidean, pdist, cdist
 
 def get_distance_mean_std(df: np.ndarray) -> (float, float):
-  #  distances = []
-   # for i in range(len(df)):
-    #    for j in range(i + 1, len(df)):
-     #       distances.append(euclidean(df[i], df[j]))
-    #distances = np.array(distances)
     distances = pdist(df, metric='euclidean')
     return distances.mean(), distances.std()
 
 
 def get_predictions(x_tst,x_trn,y_trn,rad) -> List:
 
-    predications = []
+    predictions = []
     most_common_class = y_trn.mode().iloc[0]
-    for obs_idx in range(len(x_tst)):
-        classes_in_rdx = []
-        for sample_idx in range(len(x_trn)):
-            if euclidean(x_tst[obs_idx], x_trn[sample_idx]) <= rad:
-                classes_in_rdx.append(y_trn[sample_idx])
-        if len(classes_in_rdx) > 0:
-            predications.append(Counter(classes_in_rdx).most_common(1)[0][0])
-        else:
-            predications.append(most_common_class)
+    dist_matrix = cdist(x_tst, x_trn, metric='euclidean')
 
-    return predications
+    for i in range(len(x_tst)):
+        distances_to_trn_samples = dist_matrix[i]
+        neighbor_indices = np.where(distances_to_trn_samples <= rad)[0]
+        if len(neighbor_indices) > 0:
+            classes_in_radius = y_trn.iloc[neighbor_indices].tolist()
+            predictions.append(Counter(classes_in_radius).most_common(1)[0][0])
+        else:
+            predictions.append(most_common_class)
+
+    return predictions
 
 
 def get_best_radius(dist_mean: float, dist_std: float, x_vld: DataFrame, y_vld: DataFrame, x_trn: DataFrame, y_trn: DataFrame) -> float:
@@ -55,8 +51,6 @@ def get_x_y(df: DataFrame,scaler:StandardScaler ) -> (DataFrame, DataFrame):
 
     x = df[df.columns[:-1]]
     y = df[df.columns[-1]]
-    x = scaler.fit_transform(x)
-
     return x, y
 
 def classify_with_NNR(data_trn: str, data_vld: str, df_tst: DataFrame) -> List:
@@ -66,8 +60,12 @@ def classify_with_NNR(data_trn: str, data_vld: str, df_tst: DataFrame) -> List:
     data_validation_df = pd.read_csv(data_vld)
 
     x_trn, y_trn = get_x_y(data_training_df, scaler)
+    x_trn_scaled = scaler.fit_transform(x_trn)
+
     x_vld, y_vld = get_x_y(data_validation_df, scaler)
-    x_tst, y_tst = get_x_y(df_tst, scaler)
+    x_vld_scaled = scaler.transform(x_vld)
+
+    x_tst_scaled = scaler.transform(df_tst)
 
     dist_mean, dist_std = get_distance_mean_std(x_trn)
     best_radius = get_best_radius(dist_mean, dist_std, x_vld, y_vld, x_trn, y_trn)
@@ -75,7 +73,7 @@ def classify_with_NNR(data_trn: str, data_vld: str, df_tst: DataFrame) -> List:
     #  the data_tst dataframe should only(!) be used for the final predictions your return
     print(f'starting classification with {data_trn}, {data_vld}, predicting on {len(df_tst)} instances')
 
-    predictions = get_predictions(x_tst, x_trn, y_trn, best_radius)
+    predictions = get_predictions(df_tst, x_trn, y_trn, best_radius)
 
     return predictions
 
