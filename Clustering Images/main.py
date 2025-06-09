@@ -16,7 +16,7 @@ def calc_new_centroid(images_names, images_vector_NN):
 
 def cluster_data(features_file, min_cluster_size, iterations=10):
     # todo: implement this function
-    min_similarity = 0.9
+    min_similarity = 0.7405
     cluster_id = 0
     print(f'starting clustering images in file {features_file}')
     filename2cluster = dict()  # filename to cluster mapping
@@ -57,6 +57,7 @@ def cluster_data(features_file, min_cluster_size, iterations=10):
                     if previous_cluster:
                         cluster2filenames[previous_cluster].remove(image_name)
                         cluster2centroid[previous_cluster] = calc_new_centroid(cluster2filenames[previous_cluster], images_vector_NN)
+
     clean_cluster_id = 0
     clean_cluster2filenames = dict()
     for cluster, filenames in cluster2filenames.items():
@@ -64,7 +65,7 @@ def cluster_data(features_file, min_cluster_size, iterations=10):
             clean_cluster2filenames[clean_cluster_id] = filenames
             clean_cluster_id += 1
 
-    return cluster2filenames
+    return clean_cluster2filenames
 
 
 if __name__ == '__main__':
